@@ -1,0 +1,185 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>A Question for You</title>
+    <style>
+        body {
+            margin: 0;
+            padding: 0;
+            height: 100vh;
+            width: 100vw;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            /* Make sure to save the image I generated as 'background.jpg' in the same folder */
+            background-image: url('background.jpg'); 
+            background-size: cover;
+            background-position: center;
+            background-repeat: no-repeat;
+            font-family: 'Arial', sans-serif;
+            overflow: hidden; /* Prevents scrollbars when button moves */
+        }
+
+        /* Overlay to make text readable against the photo */
+        .overlay {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.3);
+            z-index: 1;
+        }
+
+        .container {
+            z-index: 2;
+            text-align: center;
+            color: white;
+            position: relative;
+        }
+
+        h1 {
+            font-size: 3.5rem;
+            margin-bottom: 20px;
+            text-shadow: 2px 2px 4px rgba(0,0,0,0.7);
+        }
+
+        .buttons {
+            margin-top: 30px;
+            display: flex;
+            justify-content: center;
+            gap: 20px;
+            position: relative; /* Context for absolute positioning if needed */
+        }
+
+        button {
+            padding: 15px 40px;
+            font-size: 1.5rem;
+            border: none;
+            border-radius: 50px;
+            cursor: pointer;
+            transition: transform 0.2s;
+            font-weight: bold;
+        }
+
+        #yesBtn {
+            background-color: #ff4d6d;
+            color: white;
+            box-shadow: 0 4px 15px rgba(255, 77, 109, 0.5);
+        }
+
+        #yesBtn:hover {
+            transform: scale(1.1);
+            background-color: #ff2a50;
+        }
+
+        #noBtn {
+            background-color: #ffffff;
+            color: #333;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.2);
+            position: absolute; /* Allows us to move it anywhere */
+            left: 50%; /* Start next to the Yes button */
+            transform: translateX(60px); /* Offset it initially */
+        }
+
+        /* Success Message styling */
+        #success-message {
+            display: none;
+            z-index: 3;
+            background: white;
+            padding: 40px;
+            border-radius: 20px;
+            text-align: center;
+            color: #ff4d6d;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.3);
+            animation: popIn 0.5s ease;
+        }
+
+        @keyframes popIn {
+            0% { transform: scale(0); opacity: 0; }
+            80% { transform: scale(1.1); }
+            100% { transform: scale(1); opacity: 1; }
+        }
+    </style>
+</head>
+<body>
+
+    <div class="overlay"></div>
+
+    <div class="container" id="main-content">
+        <h1>Will you be my Valentine?</h1>
+        <div class="buttons">
+            <button id="yesBtn" onclick="sayYes()">YES</button>
+            <button id="noBtn" onmouseover="moveButton()" onclick="moveButton()">NO</button>
+        </div>
+    </div>
+
+    <div id="success-message">
+        <h1>I knew you'd say Yes! ❤️</h1>
+        <p>Happy Valentine's Day!</p>
+    </div>
+
+    <script>
+        const noBtn = document.getElementById('noBtn');
+        const yesBtn = document.getElementById('yesBtn');
+        const mainContent = document.getElementById('main-content');
+        const successMsg = document.getElementById('success-message');
+
+        function moveButton() {
+            // Get the window dimensions
+            const windowWidth = window.innerWidth;
+            const windowHeight = window.innerHeight;
+            
+            // Get button dimensions
+            const btnWidth = noBtn.offsetWidth;
+            const btnHeight = noBtn.offsetHeight;
+
+            // Calculate random positions within the visible screen
+            // We subtract button size so it doesn't go off-screen
+            const randomX = Math.random() * (windowWidth - btnWidth - 50); 
+            const randomY = Math.random() * (windowHeight - btnHeight - 50);
+
+            // Apply new position
+            // We use 'fixed' position to break it out of the flex container layout
+            noBtn.style.position = 'fixed';
+            noBtn.style.left = randomX + 'px';
+            noBtn.style.top = randomY + 'px';
+            
+            // Remove the initial transform once it starts moving
+            noBtn.style.transform = 'none';
+        }
+
+        function sayYes() {
+            mainContent.style.display = 'none';
+            successMsg.style.display = 'block';
+            
+            // Add some confetti effect (optional simple version)
+            createConfetti();
+        }
+
+        function createConfetti() {
+            const colors = ['#ff4d6d', '#ff8fa3', '#fff', '#ffccd5'];
+            for(let i=0; i<50; i++) {
+                const confetti = document.createElement('div');
+                confetti.style.position = 'fixed';
+                confetti.style.width = '10px';
+                confetti.style.height = '10px';
+                confetti.style.backgroundColor = colors[Math.floor(Math.random() * colors.length)];
+                confetti.style.left = Math.random() * 100 + 'vw';
+                confetti.style.top = '-10px';
+                confetti.style.zIndex = '10';
+                confetti.style.transition = 'top 3s ease-out, transform 3s ease-out';
+                document.body.appendChild(confetti);
+
+                setTimeout(() => {
+                    confetti.style.top = '100vh';
+                    confetti.style.transform = `rotate(${Math.random() * 360}deg)`;
+                }, 100);
+            }
+        }
+    </script>
+</body>
+</html>
